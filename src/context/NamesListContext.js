@@ -1,5 +1,5 @@
 import React, {useContext, useReducer, createContext, useState} from 'react';
-import {reducer, ACTIONS, initialState} from './NamesReducer';
+import {reducer, ACTIONS, initialState} from '../components/NamesReducer';
 
 const NameListContext = createContext();
 
@@ -8,6 +8,10 @@ export const NameListProvider = ({children}) => {
   const [name, setName] = useState('');
   const [groupCount, setGroupCount] = useState(0);
   const [groupNames, setGroupNames] = useState([]);
+  
+  const setGameMode = gameMode =>
+    dispatch({type: ACTIONS.GAME_MODE, payload: gameMode});
+
 
   const handleAddName = () => {
     if (name.trim() != '') {
@@ -41,6 +45,9 @@ export const NameListProvider = ({children}) => {
     dispatch({type: ACTIONS.CLEAR}); // Dispatch the CLEAR action
   };
 
+  const clearGameMode = () => dispatch({type: ACTIONS.CLEAR_GAME_MODE});
+  const resetAll = () => dispatch({type: ACTIONS.RESET_ALL});
+
   return (
     <NameListContext.Provider
       value={{
@@ -58,6 +65,9 @@ export const NameListProvider = ({children}) => {
         setGroupCount,
         groupNames,
         setGroupNames,
+        setGameMode, // expose game mode setter
+        clearGameMode,
+        resetAll,
       }}>
       {children}
     </NameListContext.Provider>

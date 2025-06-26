@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, Text, Modal, Button, FlatList} from 'react-native';
-import {useNameList} from './NamesListContext';
+import {useNameList} from '../context/NamesListContext';
 
 const ShuffledNamesModal = ({state, closeModal}) => {
   // const { state } = useNameList();

@@ -16,6 +16,8 @@ end
 
 target 'RandomNamesGenerator' do
   config = use_native_modules!
+  pod 'RNBootSplash', :path => '../node_modules/react-native-bootsplash'
+
 
   use_react_native!(
     :path => config[:reactNativePath],

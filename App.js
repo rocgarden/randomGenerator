@@ -5,81 +5,81 @@
  * @format
  */
 
-import React from 'react';
+import React,  {useEffect} from 'react';
 // import type {PropsWithChildren} from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
-  Text,
-  useColorScheme,
+  Text,Image,
   View, useWindowDimensions
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 import { NavigationContainer } from '@react-navigation/native';
+import RNBootSplash from 'react-native-bootsplash';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import { NameListProvider } from './src/components/NamesListContext';
-import NamesList from './src/components/NamesList';
+import { NameListProvider } from './src/context/NamesListContext';
+import NamesList from './src/screens/PlayerSetupScreen';
 import TestPage from './src/components/testFile';
-import ShuffledNamesModal from './src/components/ShuffledNamesModal';
-import CreateGroups from './src/components/CreateGroups';
+import ShuffledNamesModal from './src/screens/ShuffledNamesModal';
+import CreateGroups from './src/screens/CreateGroups';
+import AssignCharactersScreen from './src/screens/AssignCharactersScreen';
+import SceneGeneratorScreen from './src/screens/SceneGeneratorScreen';
+import GameModeSelectScreen from './src/screens/GameModeSelectionScreen';
+import ShuffleNamesScreen from './src/screens/ShuffleNamesScreen';
+import DuelModeScreen from './src/screens/DuelModeScreen';
+import IcebreakerModeScreen from './src/screens/IcebreakerModeScreen';
+import quickAssign from './src/assets/images/logoFrame.png';
 
-function Section({children, title}) {
-  const isDarkMode = useColorScheme() === 'dark';
+function LogoTitle() {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <Image
+      source={quickAssign}
+      style={{
+        width: 45,
+        height: 45,
+        resizeMode: 'contain',
+      }}
+    />
   );
 }
+
 const Stack = createNativeStackNavigator();
 
 function App() {
   const {height} = useWindowDimensions();
-
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: 'red',
-  };
+  useEffect(() => {
+    RNBootSplash.hide({fade: true}); // Hides splash after app is ready
+  }, []);
 
   return (
     <View style={{height}}>
       <NameListProvider>
         <NavigationContainer>
           <Stack.Navigator
-            screenOptions={{contentStyle: {backgroundColor: '#fdcb6e'}}}
-            initialRouteName="NamesList">
+            screenOptions={{
+              //contentStyle: {backgroundColor: '#18dcff'},
+              headerStyle: {
+                backgroundColor: '#6f42c1',
+              },
+              headerBackButtonDisplayMode: 'minimal',
+              headerTintColor: '#fff',
+              // headerTitle: () => (
+              //   <Text style={{fontFamily: 'Marker Felt', color: '#fff'}}>
+              //     Role Play
+              //   </Text>
+              // ),
+              // // headerTitleStyle: {
+              //   fontFamily: 'Marker Felt',
+              // },
+              headerTitle: () => <LogoTitle />,
+            }}
+            initialRouteName="GameModeSelection">
             <Stack.Screen
-              name="NamesList"
-              component={NamesList}
+              name="GameModeSelection"
+              component={GameModeSelectScreen}
               options={{header: () => null}}
             />
+            <Stack.Screen name="PlayerSetup" component={NamesList} />
+
             <Stack.Screen name="TestPage" component={TestPage} />
             <Stack.Screen
               name="ShuffledNamesModal"
@@ -89,34 +89,26 @@ function App() {
               }}
             />
             <Stack.Screen name="CreateGroups" component={CreateGroups} />
-          </Stack.Navigator>
-          {/* <StatusBar
-            barStyle={isDarkMode ? styles.container : 'dark-content'}
-            backgroundColor={backgroundStyle.backgroundColor}
-          /> */}
-          {/* <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={backgroundStyle}>  */}
-          {/* <Header /> */}
+            <Stack.Screen
+              name="AssignCharactersScreen"
+              component={AssignCharactersScreen}
+            />
+            <Stack.Screen
+              name="SceneGeneratorScreen"
+              component={SceneGeneratorScreen}
+            />
+            <Stack.Screen
+              name="ShuffleNamesScreen"
+              component={ShuffleNamesScreen}
+            />
+            <Stack.Screen name="DuelModeScreen"
+              component={DuelModeScreen}
+            />
+            <Stack.Screen name='IcebreakerModeScreen'
+              component={IcebreakerModeScreen}
+            />
 
-          {/* <NamesList/> */}
-          {/* <NameListProvider>
-              </NameListProvider> */}
-          {/* <Section title="Step One">
-                Edit <Text style={styles.highlight}>App.tsx</Text> to change
-                this screen and then come back to see your edits.
-              </Section>
-              <Section title="See Your Changes">
-                <ReloadInstructions />
-              </Section>
-              <Section title="Debug">
-                <DebugInstructions />
-              </Section>
-              <Section title="Learn More">
-                Read the docs to discover what to do next:
-              </Section> */}
-          {/* <LearnMoreLinks /> */}
-          {/* </ScrollView> */}
+          </Stack.Navigator>
         </NavigationContainer>
       </NameListProvider>
     </View>

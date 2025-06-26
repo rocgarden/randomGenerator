@@ -6,6 +6,9 @@ export const ACTIONS = {
   CREATE_GROUPS: 'create-groups',
   SET_GROUP_NAMES: 'set_group_names',
   CLEAR: 'clear', // New action to clear all names and groups
+  GAME_MODE: 'game-mode',
+  CLEAR_GAME_MODE: 'clear-game-mode',
+  RESET_ALL: 'reset-all',
 };
 
 export const initialState = {
@@ -14,7 +17,8 @@ export const initialState = {
   namePairs: [],
   nameGroups: [],
   groups: [], //store groups
-  groupNames:[] //store group names
+  groupNames: [], //store group names
+  gameMode: null,
 };
 
 export const reducer = (state, action) => {
@@ -105,10 +109,21 @@ export const reducer = (state, action) => {
         ...state,
         groupNames: action.payload.groupNames,
       };
-    
+
     case ACTIONS.CLEAR:
       return initialState; // Reset state to initial values
-    
+
+    case ACTIONS.GAME_MODE:
+      return {...state, gameMode: action.payload}; // <-- new!
+
+    case ACTIONS.CLEAR_GAME_MODE:
+      return {...state, gameMode: null};
+
+    case ACTIONS.RESET_ALL:
+      return initialState; // Reset state to initial values
+
+      // return {...state, initialState};
+
     default:
       return state;
   }
