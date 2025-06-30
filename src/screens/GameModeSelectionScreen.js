@@ -19,7 +19,7 @@ const GameModeSelectScreen = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.container}>
         <Image source={quickAssign} style={styles.logo} />
 
-        <Text style={styles.tagline}>Set Roles.Set scenes.Set Teams.</Text>
+        <Text style={styles.tagline}>Set Roles. Set Scenes. Set Teams.</Text>
 
         <View style={styles.buttonGrid}>
           <GameModeButton

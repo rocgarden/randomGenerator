@@ -40,7 +40,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 //     </View>
 //   );
 // }
-
+const modeRoutes = {
+  assignCharacters: 'AssignCharactersScreen',
+  sceneGenerator: 'SceneGeneratorScreen',
+  shuffleNames: 'ShuffleNamesScreen',
+  duelOff: 'DuelModeScreen',
+  icebreakers: 'IcebreakerModeScreen',
+  createGroups: 'CreateGroups', // intermediate setup screen
+};
 
 const NamesList = () => {
   const navigation = useNavigation();
@@ -55,21 +62,11 @@ const NamesList = () => {
   } = useNameList();
 
   const handleContinue = () => {
-    if (state.gameMode === 'assignCharacters') {
-      navigation.navigate('AssignCharactersScreen');
-    } else if (state.gameMode === 'sceneGenerator') {
-      navigation.navigate('SceneGeneratorScreen');
-    } else if (state.gameMode === 'shuffleNames') {
-      navigation.navigate('ShuffleNamesScreen');
-    } else if (state.gameMode === 'createGroups') {
-      navigation.navigate('CreateGroups');
-    } else if (state.gameMode === 'duelOff') {
-      navigation.navigate('DuelModeScreen');
-    } else if (state.gameMode === 'icebreakers') {
-      navigation.navigate('IcebreakerModeScreen');
+    const route = modeRoutes[state.gameMode];
+    if (route) {
+      navigation.navigate(route);
     }
   };
-
   const formatGameMode = mode => {
     if (!mode) return 'Continue';
     return mode

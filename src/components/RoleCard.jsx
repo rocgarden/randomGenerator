@@ -1,56 +1,127 @@
-// components/RoleCard.jsx
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+//components/rolecard
+import React, { useRef, useState } from 'react';
+import {
+  Animated,
+  TouchableWithoutFeedback,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
+const RoleCard = ({name, role, backgroundColor, ...props}) => {
+  const [flipped, setFlipped] = useState(false);
+  const animatedValue = useRef(new Animated.Value(0)).current;
 
-const RoleCard = ({name, role, onPress, backgroundColor = '#d6c8ff'}) => {
-  const isObjectRole = typeof role === 'object';
+  const frontInterpolate = animatedValue.interpolate({
+    inputRange: [0, 180],
+    outputRange: ['0deg', '180deg'],
+  });
 
-  const CardContainer = onPress ? TouchableOpacity : View;
+  const backInterpolate = animatedValue.interpolate({
+    inputRange: [0, 180],
+    outputRange: ['180deg', '360deg'],
+  });
+
+  const flipCard = () => {
+    if (flipped) {
+      Animated.spring(animatedValue, {
+        toValue: 0,
+        friction: 8,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.spring(animatedValue, {
+        toValue: 180,
+        friction: 8,
+        useNativeDriver: true,
+      }).start();
+    }
+    setFlipped(!flipped);
+  };
 
   return (
-    <CardContainer
-      style={[styles.card, {backgroundColor}]}
-      onPress={onPress}
-      disabled={!onPress}>
-      <Text style={styles.name}>{name}</Text>
+    <TouchableWithoutFeedback onPress={flipCard}>
+      <View style={[styles.cardWrapper, props.cardStyle]}>
+        <Animated.View
+          style={[
+            styles.card,
+            {
+              backgroundColor,
+              transform: [{rotateY: frontInterpolate}],
+              zIndex: flipped ? 0 : 1,
+            },
+          //  styles.cardFront,
+          ]}>
+          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.icon}>{role?.icon || '🧑'}</Text>
+          <Text style={styles.roleName}>{role?.name || role}</Text>
+        </Animated.View>
 
-      {isObjectRole && role.icon ? (
-        <Text style={styles.icon}>{role.icon}</Text>
-      ) : null}
-
-      <Text style={styles.role}>{isObjectRole ? role.name : role}</Text>
-    </CardContainer>
+        <Animated.View
+          style={[
+            styles.card,
+            styles.cardBack,
+            {
+              transform: [{rotateY: backInterpolate}],
+              zIndex: flipped ? 1 : 0,
+            },
+          ]}>
+          <Text style={styles.roleBackTitle}>
+            {role.icon} {role.name}
+          </Text>
+          <Text style={styles.description}>{role.description}</Text>
+        </Animated.View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
+export default RoleCard;
+
 const styles = StyleSheet.create({
+  cardWrapper: {
+    width: '45%',
+    height: 180,
+    margin: 10,
+  },
   card: {
-    flex: 1,
-    aspectRatio: 1,
-    margin: 8,
-    borderRadius: 12,
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backfaceVisibility: 'hidden',
+    borderRadius: 10,
+    padding: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 12,
-    elevation: 3,
+  },
+  cardFront: {
+    backgroundColor: '#fdcb6e',
+  },
+  cardBack: {
+    backgroundColor: '#ffeaa7',
   },
   name: {
-    fontSize: 28,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight:'bold',
     fontFamily: 'Marker Felt',
     color: '#ffffff',
   },
   icon: {
     fontSize: 30,
-    marginVertical: 4,
+    marginVertical: 8,
   },
-  role: {
-    fontSize: 24,
-    textAlign: 'center',
+  roleName: {
+    fontSize: 16,
     color: '#fff',
-    fontWeight: '400',
+  },
+  roleBackTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  description: {
+    fontSize: 18,
+    color: '#333',
+    textAlign: 'center',
   },
 });
-
-export default RoleCard;

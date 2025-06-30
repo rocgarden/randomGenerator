@@ -105,6 +105,7 @@ const AssignCharactersScreen = () => {
         backgroundColor={getColorForRole(
           typeof item.role === 'string' ? item.role : item.role.name,
         )}
+        cardStyle={{width: '90%', }}
       />
     </View>
   );
@@ -174,7 +175,7 @@ const AssignCharactersScreen = () => {
                 renderItem={renderAssignment}
                 keyExtractor={(item, index) => index.toString()}
                 numColumns={2}
-                contentContainerStyle={styles.grid}
+               contentContainerStyle={styles.grid}
               />
               <TouchableOpacity
                 style={styles.shuffleButton}
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 15,
+    padding: 5,
   },
   title: {
     fontSize: 24,
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    marginVertical:40,
+    marginVertical: 40,
     gap: 10,
   },
   categoryButton: {
@@ -284,14 +285,15 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
-    aspectRatio: 1,
+    // aspectRatio: 1,
     // backgroundColor: '#d6c8ff',
-    margin: 8,
+    // margin: 8,
     borderRadius: 12,
-    justifyContent: 'center',
+    //justifyContent: 'center',
     alignItems: 'center',
     //padding: 12,
-    elevation: 3,
+    //elevation: 3,
+
   },
   name: {
     fontSize: 18,
@@ -303,7 +305,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   grid: {
-    justifyContent: 'center',
+    // justifyContent: 'center',
     paddingBottom: 40,
   },
   shuffleButton: {

@@ -7,16 +7,15 @@ import {
   Modal,
   TouchableOpacity,
   Dimensions,
-  ScrollView,
   SafeAreaView,
 } from 'react-native';
 import {useNameList} from '../context/NamesListContext';
 import {sceneData} from '../data/scenes';
-import {shuffleArray} from '../utils/gameEngine';
 import StartOverButton from '../components/StartOverButton';
 import RoleCard from '../components/RoleCard';
 import { getColorForRole } from '../utils/cardColor';
 import ScreenWrapper from '../components/ScreenWrapper';
+import { generateSceneAssignments } from '../utils/gameEngine';
 
 const numColumns = 2;
 const cardSize = Dimensions.get('window').width / 2 - 30;
@@ -30,35 +29,22 @@ const SceneGeneratorScreen = () => {
   const [showStarter, setShowStarter] = useState(false);
 
 
-  useEffect(() => {
-    if (!state.names.length) return;
+useEffect(() => {
+  if (!state.names.length || selectedScene) return;
+  const {scene, assignments} = generateSceneAssignments(state.names, sceneData);
+  setSelectedScene(scene);
+  setAssignments(assignments);
+}, [state.names, selectedScene]);
 
-    const scene = sceneData[Math.floor(Math.random() * sceneData.length)];
-    const shuffledNames = shuffleArray(state.names);
-    const shuffledRoles = shuffleArray(scene.roles);
-
-    const leaderRole = shuffledRoles[0];
-    const repeatedRoles = shuffledRoles.slice(1);
-
-    const paired = shuffledNames.map((name, index) => {
-      let role;
-      if (index === 0) {
-        role = leaderRole;
-      } else {
-        const repeatIndex = (index - 1) % repeatedRoles.length;
-        const baseRole = repeatedRoles[repeatIndex];
-        const suffix = Math.floor((index - 1) / repeatedRoles.length) + 1;
-        role = {
-          ...baseRole,
-          name: `${baseRole.name} ${suffix > 1 ? suffix : ''}`.trim(),
-        };
-      }
-      return {name, role};
-    });
-
+  const shuffleScene = () => {
+    const {scene, assignments} = generateSceneAssignments(
+      state.names,
+      sceneData,
+    );
     setSelectedScene(scene);
-    setAssignments(paired);
-  }, [state.names]);
+    setAssignments(assignments);
+    setShowStarter(false);
+  };
 
   const openRoleModal = role => {
     setSelectedRole(role);
@@ -96,6 +82,11 @@ const SceneGeneratorScreen = () => {
             </Text>
           </View>
         )}
+
+        <TouchableOpacity onPress={shuffleScene} style={styles.refreshButton}>
+          <Text style={styles.refreshButtonText}>🔁 New Scene</Text>
+        </TouchableOpacity>
+
         <FlatList
           scrollEnabled={false} // <--added property for warning
           data={assignments}
@@ -118,7 +109,7 @@ const SceneGeneratorScreen = () => {
             <RoleCard
               name={item.name}
               role={item.role}
-              onPress={() => openRoleModal(item.role)}
+              // onPress={() => openRoleModal(item.role)}
               backgroundColor={getColorForRole(item.role.name)}
             />
           )}
@@ -130,25 +121,6 @@ const SceneGeneratorScreen = () => {
       <View style={styles.adPlaceholder}>
         <Text style={{color: '#aaa'}}>Ad Placeholder</Text>
       </View>
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>
-              {selectedRole?.icon} {selectedRole?.name}
-            </Text>
-            <Text style={styles.modalDescription}>
-              {selectedRole?.description}
-            </Text>
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
-              <Text style={styles.modalClose}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </SafeAreaView>
   );
 };
@@ -265,6 +237,21 @@ const styles = StyleSheet.create({
     color: '#2d3436',
     fontStyle: 'italic',
     textAlign: 'center',
+  },
+  refreshButton: {
+    backgroundColor: '#fff',
+    borderColor: '#6f42c1',
+    borderWidth: 2,
+    borderRadius: 25,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignSelf: 'center',
+    marginVertical: 10,
+  },
+  refreshButtonText: {
+    color: '#6f42c1',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 

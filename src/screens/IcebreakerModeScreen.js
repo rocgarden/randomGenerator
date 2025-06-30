@@ -37,17 +37,25 @@ const IcebreakerModeScreen = () => {
     setAvailableNames(rest);
   };
 
-  useEffect(() => {
-    if (state.names.length >= 1) {
-      setAvailableNames(shuffleArray(state.names));
-      setCurrentCard(null);
-    }
-  }, [state.names]);
+ useEffect(() => {
+   if (state.names.length >= 1) {
+     const shuffled = shuffleArray(state.names);
+     setAvailableNames(shuffled);
+    if (currentCard && !state.names.includes(currentCard.name)) {
+    setCurrentCard(null);
+    };
+     // 🛡️ Guard against stale currentCard
+     if (!shuffled.includes(currentCard?.name)) {
+       setCurrentCard(null);
+     }
+   }
+ }, [state.names]);
+
 
   return (
     <SafeAreaView style={styles.container}>
-    <ScreenWrapper scrollable>
-      {/* <ScrollView contentContainerStyle={styles.scrollContainer}> */}
+      <ScreenWrapper scrollable>
+        {/* <ScrollView contentContainerStyle={styles.scrollContainer}> */}
         <Text style={styles.title}>🧊 Icebreaker Mode</Text>
 
         <Text style={styles.instructions}>
@@ -66,10 +74,14 @@ const IcebreakerModeScreen = () => {
         ) : (
           <Text style={styles.doneText}>All players have gone!</Text>
         )}
-      {/* </ScrollView> */}
-    </ScreenWrapper>
+        {/* </ScrollView> */}
+      </ScreenWrapper>
       <TouchableOpacity
-        style={styles.button}
+        style={[
+          styles.button,
+          (state.names.length < 1 || availableNames.length === 0) &&
+            styles.buttonDisabled,
+        ]}
         onPress={pickNext}
         disabled={state.names.length < 1 || availableNames.length === 0}>
         <Text style={styles.buttonText}>
@@ -116,7 +128,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#ffeaa7',
     borderRadius: 16,
-    padding: 40,
+    padding: 30,
     // width: '90%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -171,6 +183,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     //fontFamily: 'Marker Felt',
+  },
+  buttonDisabled: {
+    backgroundColor: '#ccc',
+    borderColor: '#999',
   },
   adPlaceholder: {
     width: '100%',

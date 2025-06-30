@@ -9,6 +9,9 @@ import {
   TouchableOpacity,
   Modal,
   StyleSheet,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  ScrollView
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useNameList} from '../context/NamesListContext';
@@ -99,26 +102,31 @@ const CreateGroups = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.sectionEmoji}>🧑‍🤝‍🧑 Create Groups</Text>
-      <ScreenWrapper>
-        {groupNames.map((name, index) => (
-          <View key={index} style={styles.groupInputRow}>
-            <TextInput
-              value={name}
-              onChangeText={text => handleGroupNameChange(index, text)}
-              style={styles.groupInput}
-              placeholder="Group name"
-              placeholderTextColor="#ccc"
-            />
-            <TouchableOpacity onPress={() => handleDeleteGroup(index)}>
-              <Text style={styles.buttonText}>✖️</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={{flex: 1}}>
+        <ScreenWrapper>
+          {groupNames.map((name, index) => (
+            <View key={index} style={styles.groupInputRow}>
+              <TextInput
+                value={name}
+                onChangeText={text => handleGroupNameChange(index, text)}
+                style={styles.groupInput}
+                placeholder="Group name"
+                placeholderTextColor="#ccc"
+              />
+              <TouchableOpacity onPress={() => handleDeleteGroup(index)}>
+                <Text style={styles.buttonText}>✖️</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
 
-        <TouchableOpacity onPress={addGroup} style={styles.addBox}>
-          <Text style={styles.addBoxText}>➕ Add Group</Text>
-        </TouchableOpacity>
-      </ScreenWrapper>
+          <TouchableOpacity onPress={addGroup} style={styles.addBox}>
+            <Text style={styles.addBoxText}>➕ Add Group</Text>
+          </TouchableOpacity>
+        </ScreenWrapper>
+      </KeyboardAvoidingView>
+
       <View style={styles.buttonRow}>
         <TouchableOpacity
           style={styles.button}
@@ -238,13 +246,14 @@ const styles = StyleSheet.create({
     padding: 40,
     justifyContent: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    maxHeight: '90%',
   },
   modalTitle: {
     color: '#fff',
     fontFamily: 'Marker Felt',
     fontSize: 24,
     textAlign: 'center',
-    marginTop:30,
+    marginTop: 30,
     marginBottom: 15,
   },
   item: {
